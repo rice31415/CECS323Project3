@@ -21,6 +21,8 @@ public class Student {
     @OneToMany(mappedBy = "student")
     private Set<Transcript> transcripts;
 
+    public enum RegistrationResult { SUCCESS, ALREADY_PASSED, ENROLLED_IN_SECTION, NO_PREREQUISITES, ENROLLED_IN_ANOTHER, TIME_CONFLICT };
+
     public Student() {
 
     }
@@ -80,5 +82,23 @@ public class Student {
         }
         gpa /= units;
         return gpa;
+    }
+
+    public RegistrationResult registerForSection(Section s) {
+        for (Transcript t: transcripts) {
+            //check for prereqs in a middle loop?
+            if (t.getSection().getCourse() == s.getCourse().getPrerequisites()) {
+                if (t.getSection().getCourse() == s.getCourse()) {
+                    if (t.getGradeEarned().compareTo("C") < 0) {
+                        return RegistrationResult.ALREADY_PASSED;
+                    }
+                }
+                else if (t.getSection() == s) {
+                    return RegistrationResult.ENROLLED_IN_SECTION;
+                }
+                //else if ()
+            }
+        }
+        return RegistrationResult.SUCCESS;
     }
 }
