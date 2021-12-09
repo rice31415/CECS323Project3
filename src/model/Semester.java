@@ -25,8 +25,7 @@ public class Semester {
         
     }
 
-    public Semester(int semesterId, String title, LocalDate startDate) {
-        this.semesterId = semesterId;
+    public Semester(String title, LocalDate startDate) {
         this.setTitle(title);
         this.setStartDate(startDate);
     }

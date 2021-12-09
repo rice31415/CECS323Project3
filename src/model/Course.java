@@ -33,19 +33,17 @@ public class Course {
 
     }
 
-    public Course(int courseID, String number, String title, byte units) {
-        this.courseID = courseID;
+    public Course(Department department, String number, String title, byte units) {
+        this.setDepartment(department);
         this.setNumber(number);
         this.setTitle(title);
         this.setUnits(units);
+        //this.setPrerequisites(Collections.emptySet());
+        prerequisites = new HashSet<Prerequisite>();
     }
 
     public int getCourseID() {
         return courseID;
-    }
-
-    public void setCourseID(int courseID) {
-        this.courseID = courseID;
     }
 
     public String getNumber() {

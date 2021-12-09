@@ -22,11 +22,14 @@ public class TimeSlot {
     
     }
 
-    public TimeSlot(int timeSlotId, byte daysOfWeek, LocalTime startTime, LocalTime endTime) {
-        this.timeSlotId = timeSlotId;
+    public TimeSlot(byte daysOfWeek, LocalTime startTime, LocalTime endTime) {
         this.daysOfWeek = daysOfWeek;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public int getTimeSlotId() {
+        return timeSlotId;
     }
 
     public byte getDaysOfWeek() {
@@ -51,5 +54,13 @@ public class TimeSlot {
     
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
+    }
+
+    public boolean checkTimeConflict(TimeSlot t) {
+        if ((daysOfWeek & t.daysOfWeek) > 0) {
+            //check if the times conflict
+            return !endTime.isBefore(t.startTime) && startTime.isAfter(t.endTime);
+        }
+        return false;
     }
 }

@@ -19,12 +19,23 @@ public class Prerequisite {
 
     private char minimumGrade;
 
-    public Prerequisite(char minimumGrade) {
+    public Prerequisite(Course prereq, Course course, char minimumGrade) {
+        this.prereq = prereq;
+        this.course = course;
         this.minimumGrade = minimumGrade;
+        course.getPrerequisites().add(this);
     }
 
     public Prerequisite() {
         
+    }
+
+    public Course getPrereq() {
+        return prereq;
+    }
+
+    public Course getCourse() {
+        return course;
     }
 
     public char getMinimumGrade() {

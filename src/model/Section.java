@@ -31,21 +31,24 @@ public class Section {
     private Semester semester;
 
     @JoinTable(
-        name = "students", 
+        name = "enrollments", 
         joinColumns = @JoinColumn(name = "SECTION_ID"), 
         inverseJoinColumns = @JoinColumn(name = "STUDENT_ID")
     )
     @ManyToMany
-    private Set<Student> students;
+    private Set<Student> enrollments;
 
     public Section() {
         
     }
 
-    public Section(int sectionId, short maxCapacity, short sectionNumber) {
-        this.sectionId = sectionId;
+    public Section(Course course, short sectionNumber, Semester semester, TimeSlot timeSlot, short maxCapacity) {
+        this.course = course;
+        this.semester = semester;
+        this.timeSlot = timeSlot;
         this.maxCapacity = maxCapacity;
         this.sectionNumber = sectionNumber;
+        enrollments = new HashSet<Student>();
     }
 
     public short getMaxCapacity() {
@@ -93,16 +96,16 @@ public class Section {
         semester.getSections().add(this);
     }
 
-    public Set<Student> getStudents() {
-        return students;
+    public Set<Student> getEnrollments() {
+        return enrollments;
     }
 
-    public void setStudents(Set<Student> students) {
-        this.students = students;
+    public void setEnrollments(Set<Student> enrollments) {
+        this.enrollments = enrollments;
     }
 
     public void addStudent(Student student) {
-        students.add(student);
+        enrollments.add(student);
         student.getSections().add(this);
     }
 }

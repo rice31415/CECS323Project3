@@ -25,18 +25,13 @@ public class Department {
 
     }
 
-    public Department(int departmentID, String name, String abbreviation) {
-        this.setDepartmentID(departmentID);
+    public Department(String name, String abbreviation) {
         this.name = name;
         this.abbreviation = abbreviation;
     }
 
     public int getDepartmentID() {
         return departmentID;
-    }
-
-    public void setDepartmentID(int departmentID) {
-        this.departmentID = departmentID;
     }
 
     public String getName() {
