@@ -14,16 +14,16 @@ public class Prerequisite {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "COURSE_ID")
-    private Course course;
+    @JoinColumn(name = "PRECEDE_ID")
+    private Course precede;
 
     private char minimumGrade;
 
-    public Prerequisite(Course prereq, Course course, char minimumGrade) {
+    public Prerequisite(Course prereq, Course precede, char minimumGrade) {
         this.prereq = prereq;
-        this.course = course;
+        this.precede = precede;
         this.minimumGrade = minimumGrade;
-        course.getPrerequisites().add(this);
+        precede.getPrerequisites().add(this);
     }
 
     public Prerequisite() {
@@ -34,8 +34,8 @@ public class Prerequisite {
         return prereq;
     }
 
-    public Course getCourse() {
-        return course;
+    public Course getPrecede() {
+        return precede;
     }
 
     public char getMinimumGrade() {

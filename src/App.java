@@ -3,22 +3,8 @@ import java.util.*;
 
 import jakarta.persistence.*;
 import model.*;
+import model.Student.RegistrationResult;
 public class App {
-    // These demos show finding, creating, and updating individual objects.
-    private static void basicDemos() {
-        // In true Java fashion, we can't just create an EntityManager; we have to first
-        // create a Factory that can then create the Manager. Don't ask me why.
-
-        // The parameter "demoDb" matches the "name" of our data source, set in
-        // src/META-INF/persistence.xml.
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("demoDb");
-        EntityManager em = factory.createEntityManager();
-        
-        // The EntityManager object lets us find, create, update, and delete individual
-        // instances of our entity classes.
-        
-    }
-
     private static void instantiateModel(EntityManager em) {
         em.getTransaction().begin();
             
@@ -55,11 +41,9 @@ public class App {
         Section f = new Section(cecs282, (short)7, spring22, slot1, (short)35);
         Section g = new Section(ital101a, (short)1, spring22, slot3, (short)25);
 
-
         Student student1 = new Student(123456789, "Naomi Nagata");
         Student student2 = new Student(987654321, "James Holden");
         Student student3 = new Student(555555555, "Amos Burton");
-        
 
         Transcript aa1 = new Transcript("A", a, student1);
         Transcript ba1 = new Transcript("A", b, student1);
@@ -106,7 +90,7 @@ public class App {
         em.persist(e);
         em.persist(f);
         em.persist(g);
-        
+
         em.persist(student1);
         em.persist(student2);
         em.persist(student3);
@@ -120,27 +104,15 @@ public class App {
         em.persist(ac3);
         em.persist(bb3);
         em.persist(cd3);
-
+        
         // Committing the transaction will push/"flush" the changes to the database.
         em.getTransaction().commit();
-
     }
 
-
-
     private static void studentLookup(EntityManager em) {
-        // The important bit is "MUSEUMS m"; this tells the query to iterate over the
-        // MUSEUMS table one row at a time, temporarily calling each row "m". We can then
-        // refer to "m" like it's an object, in order to select a row or filter based 
-        // on its columns.
-
-        // createQuery returns a Query object, which can be executed with getSingleResult
-        // if it always returns <= 1 object.
-
-        // If we want to SAFELY involve user input, we use a TypedQuery.
-        Scanner input = new Scanner(System.in);
+        Scanner scan = new Scanner(System.in);
         System.out.println("Please enter a student name: ");
-        String name = input.nextLine();
+        String name = scan.nextLine();
 
         // A TypedQuery is strongly typed; a normal Query would not be.
         var namedStudent = em.createQuery("SELECT s FROM STUDENTS s WHERE "
@@ -156,22 +128,128 @@ public class App {
         catch (NoResultException ex) {
             System.out.println("Student with name '" + name + "' not found.");
         }
+    }
 
-        // System.out.println();
-        // System.out.println("Example #4: Using JPQL to select all museums");
-        // // This is simple. Just omit the WHERE, and use .getResultList().
-        // var students = em.createQuery("select s from STUDENTS s", Student.class).getResultList();
+    private static void registration(EntityManager em) {
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Please enter a semester or choose from the menu options: ");
+        
+        var semesters = em.createQuery("select s from SEMESTERS s", Semester.class).getResultList();
 
-        // for (Student s : students) {
-        //     System.out.println(s);
-        // }
+        Integer i = 1;
+        for (Semester s : semesters) {
+            System.out.println(i + ": " + s.getTitle());
+            i++;
+        }
+
+        Semester sem = new Semester();
+        while (sem.getTitle() == null) {
+            String input = scan.nextLine();
+            i = 1;
+            for (Semester s : semesters) {
+                if (i.toString().equals(input)) {
+                    sem = s;
+                }
+                else if (s.getTitle().equals(input)) {
+                    sem = s;
+                }
+                i++;
+            }
+            if (sem == null) {
+                System.out.println("Invalid input, please try again: ");
+            }
+        }
+        
+        System.out.println("Please enter a student name: ");
+        String name = scan.nextLine();
+        var namedStudent = em.createQuery("SELECT s FROM STUDENTS s WHERE "
+            + "s.name = ?1", Student.class);
+        namedStudent.setParameter(1, name);
+        Student student = new Student();
+        try {
+            student = namedStudent.getSingleResult();
+        }
+        catch (NoResultException ex) {
+            System.out.println("Student with name '" + name + "' not found.");
+        }
+
+        System.out.println("Please enter a course section (in the format CECS 277-05): ");
+        String secStr = scan.nextLine();
+        String [] secArr = secStr.split(" |\\-");
+        while (secArr.length != 3) {
+            System.out.println("Invalid input format. Please try again: ");
+            secStr = scan.nextLine();
+            secArr = secStr.split(" |\\-");
+        }
+
+        var sec = em.createQuery("SELECT s FROM SECTIONS s JOIN s.course c JOIN s.semester sem JOIN c.department d WHERE "
+            + "s.sectionNumber = ?3 AND d.abbreviation = ?1 AND c.number = ?2 AND sem.title = ?4", Section.class);
+
+        Section section;
+        try {
+            sec.setParameter(1, secArr[0]);
+            sec.setParameter(2, secArr[1]);
+            sec.setParameter(3, Integer.parseInt(secArr[2]));
+            sec.setParameter(4, sem.getTitle());
+            section = sec.getSingleResult();
+            System.out.println(student.registerForSection(section));
+            if (student.registerForSection(section) == RegistrationResult.SUCCESS) {
+                //em.getTransaction().begin();
+                student.addSection(section);
+                //em.getTransaction().commit();
+            }
+        }
+        catch (NoResultException ex) {
+            System.out.println("That section does not exist");
+        }
     }
 
 
     public static void main(String[] args) throws Exception {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("demoDb");
         EntityManager em = factory.createEntityManager();
-        instantiateModel(em);
-        studentLookup(em);
+        String input = "6";
+
+        while (!input.equals("0")) {
+            System.out.println("Please choose an option: ");
+            System.out.println("1: Instantiate Model");
+            System.out.println("2: Student Lookup");
+            System.out.println("3: Section Registration");
+            System.out.println("4: Debugging");
+            System.out.println("5: Full Test");
+            System.out.println("0: Exit");
+            Scanner scan = new Scanner(System.in);
+            input = scan.nextLine();
+
+            if (input.equals("1")) {
+                instantiateModel(em);
+            }
+            else if (input.equals("2")) {
+                studentLookup(em);
+            }
+            else if (input.equals("3")) {
+                registration(em);
+            }
+            else if (input.equals("4")) {
+                em.getTransaction().begin();
+                em.getTransaction().commit();
+            }
+            else if (input.equals("5")) {
+                instantiateModel(em);
+                studentLookup(em);
+                registration(em);
+            }
+            else if (input.equals("0")) {
+                System.out.println("Exiting...");
+            }
+            else {
+                System.out.println("Invalid Input");
+            }
+        }
+        //studentLookup();
+        // em.getTransaction().begin();
+        // em.getTransaction().commit();
+        // registration(em);
+
     }
 }

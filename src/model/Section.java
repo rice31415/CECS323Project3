@@ -51,6 +51,10 @@ public class Section {
         enrollments = new HashSet<Student>();
     }
 
+    public int getSectionId() {
+        return sectionId;
+    }
+
     public short getMaxCapacity() {
         return maxCapacity;
     }

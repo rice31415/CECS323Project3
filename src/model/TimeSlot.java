@@ -59,7 +59,7 @@ public class TimeSlot {
     public boolean checkTimeConflict(TimeSlot t) {
         if ((daysOfWeek & t.daysOfWeek) > 0) {
             //check if the times conflict
-            return !endTime.isBefore(t.startTime) && startTime.isAfter(t.endTime);
+            return !endTime.isBefore(t.startTime) && !startTime.isAfter(t.endTime);
         }
         return false;
     }

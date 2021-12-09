@@ -30,6 +30,10 @@ public class Semester {
         this.setStartDate(startDate);
     }
 
+    public int getSemesterId() {
+        return semesterId;
+    }
+
     public LocalDate getStartDate() {
         return startDate;
     }

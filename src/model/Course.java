@@ -26,7 +26,7 @@ public class Course {
     @JoinColumn(name = "DEPARTMENT_ID")
     private Department department;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "prereq")
     private Set<Prerequisite> prerequisites;
 
     public Course() {
@@ -38,7 +38,6 @@ public class Course {
         this.setNumber(number);
         this.setTitle(title);
         this.setUnits(units);
-        //this.setPrerequisites(Collections.emptySet());
         prerequisites = new HashSet<Prerequisite>();
     }
 

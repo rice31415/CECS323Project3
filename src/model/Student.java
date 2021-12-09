@@ -134,6 +134,7 @@ public class Student {
             }
         }
 
+        // addSection(s);
         return RegistrationResult.SUCCESS;
     }
 }
