@@ -26,7 +26,7 @@ public class Course {
     @JoinColumn(name = "DEPARTMENT_ID")
     private Department department;
 
-    @OneToMany(mappedBy = "prereq")
+    @OneToMany(mappedBy = "precede")
     private Set<Prerequisite> prerequisites;
 
     public Course() {

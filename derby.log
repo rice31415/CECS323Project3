@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Thu Dec 09 04:28:40 PST 2021:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.15.2.0 - (1873585): instance a816c00e-017d-9f2a-c6fb-000005b3b3f0 
+Thu Dec 09 04:56:24 PST 2021:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.15.2.0 - (1873585): instance a816c00e-017d-9f44-2899-000005b429a8 
 on database directory C:\DataGrip\CECS323 with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@2a139a55 
 Loaded from file:/C:/VSCode/CECS323/Project3/lib/derby.jar
 java.vendor=Oracle Corporation

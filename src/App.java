@@ -21,6 +21,22 @@ public class App {
         Course cecs282 = new Course(cecs, "282", "Advanced C++", (byte)3);
         Course ital101a = new Course(ital, "101A", "Fundamentals of Italian", (byte)4);
         Course ital101b = new Course(ital, "101B", "Fundamentals of Italian", (byte)4);
+
+        em.persist(spring21);
+        em.persist(fall21);
+        em.persist(spring22);
+
+        em.persist(cecs);
+        em.persist(ital);
+
+        em.persist(cecs174);
+        em.persist(cecs274);
+        em.persist(cecs277);
+        em.persist(cecs282);
+        em.persist(ital101a);
+        em.persist(ital101b);
+        em.getTransaction().commit();
+        em.getTransaction().begin();
         
         Prerequisite cecs274p1 = new Prerequisite(cecs174, cecs274, 'C');
         Prerequisite cecs277p1 = new Prerequisite(cecs174, cecs277, 'C');
@@ -45,32 +61,7 @@ public class App {
         Student student2 = new Student(987654321, "James Holden");
         Student student3 = new Student(555555555, "Amos Burton");
 
-        Transcript aa1 = new Transcript("A", a, student1);
-        Transcript ba1 = new Transcript("A", b, student1);
-        Transcript ca1 = new Transcript("A", c, student1);
-        Transcript ac2 = new Transcript("C", a, student2);
-        Transcript bc2 = new Transcript("C", b, student2);
-        Transcript cc2 = new Transcript("C", c, student2);
-        Transcript ac3 = new Transcript("C", a, student3);
-        Transcript bb3 = new Transcript("B", b, student3);
-        Transcript cd3 = new Transcript("D", c, student3);
-
-        //student1.addSection(d);
         d.addStudent(student1);
-
-        em.persist(spring21);
-        em.persist(fall21);
-        em.persist(spring22);
-
-        em.persist(cecs);
-        em.persist(ital);
-
-        em.persist(cecs174);
-        em.persist(cecs274);
-        em.persist(cecs277);
-        em.persist(cecs282);
-        em.persist(ital101a);
-        em.persist(ital101b);
 
         em.persist(cecs274p1);
         em.persist(cecs277p1);
@@ -94,6 +85,18 @@ public class App {
         em.persist(student1);
         em.persist(student2);
         em.persist(student3);
+        em.getTransaction().commit();
+        em.getTransaction().begin();
+
+        Transcript aa1 = new Transcript("A", a, student1);
+        Transcript ba1 = new Transcript("A", b, student1);
+        Transcript ca1 = new Transcript("A", c, student1);
+        Transcript ac2 = new Transcript("C", a, student2);
+        Transcript bc2 = new Transcript("C", b, student2);
+        Transcript cc2 = new Transcript("C", c, student2);
+        Transcript ac3 = new Transcript("C", a, student3);
+        Transcript bb3 = new Transcript("B", b, student3);
+        Transcript cd3 = new Transcript("D", c, student3);
 
         em.persist(aa1);
         em.persist(ba1);
@@ -194,9 +197,9 @@ public class App {
             section = sec.getSingleResult();
             System.out.println(student.registerForSection(section));
             if (student.registerForSection(section) == RegistrationResult.SUCCESS) {
-                //em.getTransaction().begin();
+                em.getTransaction().begin();
                 student.addSection(section);
-                //em.getTransaction().commit();
+                em.getTransaction().commit();
             }
         }
         catch (NoResultException ex) {
@@ -208,35 +211,25 @@ public class App {
     public static void main(String[] args) throws Exception {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("demoDb");
         EntityManager em = factory.createEntityManager();
-        String input = "6";
+        String input = "4";
 
         while (!input.equals("0")) {
             System.out.println("Please choose an option: ");
             System.out.println("1: Instantiate Model");
             System.out.println("2: Student Lookup");
             System.out.println("3: Section Registration");
-            System.out.println("4: Debugging");
-            System.out.println("5: Full Test");
             System.out.println("0: Exit");
             Scanner scan = new Scanner(System.in);
             input = scan.nextLine();
 
             if (input.equals("1")) {
                 instantiateModel(em);
+                //need to switch to drop-and-create to run a second time
             }
             else if (input.equals("2")) {
                 studentLookup(em);
             }
             else if (input.equals("3")) {
-                registration(em);
-            }
-            else if (input.equals("4")) {
-                em.getTransaction().begin();
-                em.getTransaction().commit();
-            }
-            else if (input.equals("5")) {
-                instantiateModel(em);
-                studentLookup(em);
                 registration(em);
             }
             else if (input.equals("0")) {
@@ -246,10 +239,5 @@ public class App {
                 System.out.println("Invalid Input");
             }
         }
-        //studentLookup();
-        // em.getTransaction().begin();
-        // em.getTransaction().commit();
-        // registration(em);
-
     }
 }
